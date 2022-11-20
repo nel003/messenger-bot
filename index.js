@@ -10,12 +10,18 @@ const cute = require("./commands/cute");
 const random = require("./commands/gs");
 const grant = require("./commands/grant");
 const rmp = require("./commands/rmp");
+const essay = require("./commands/essayWriter");
+const story = require("./commands/storyWriter");
 require("dotenv").config();
 
-const allCommands = ["gwapo", "gs", "cute"];
+const allCommands = ["gwapo", "gs", "cute", "essay", "story"];
+
+app.get("/", (req, res) => {
+  res.send("Hello GET");
+});
 
 app.head("/", (req, res) => {
-  res.send("Hello");
+  res.send("Hello HEAD");
 });
 
 login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
@@ -46,7 +52,16 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
       if (message.body === "/rmp") {
         await rmp(api, message);
       }
-      //allCommands
+
+      //education commands
+      if (msgToList[0] === "/essay") {
+        await essay(api, message, message.body.replace("/essay"));
+      }
+      if (msgToList[0] === "/story") {
+        await story(api, message, message.body.replace("/story"));
+      }
+
+      //monggoloid commands
       if (message.body === "/gwapo") {
         await gwapo(api, message);
       }
@@ -56,6 +71,7 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
       if (message.body === "/gs") {
         random(api, message);
       }
+      //END
     }
   });
 });
