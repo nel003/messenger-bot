@@ -7,7 +7,7 @@ module.exports = async function random(api, message) {
   if (has === null) {
     return;
   }
-  if (!has.allowed.includes("gwapo")) {
+  if (!has.allowed.includes("gs")) {
     return;
   }
 
