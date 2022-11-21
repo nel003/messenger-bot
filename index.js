@@ -47,6 +47,23 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
       await save(api, message);
     }
 
+    //Unsend
+    if (message.type === "message_reaction") {
+      const myID = api.getCurrentUserID();
+      const mSenderId = message.senderID;
+      if(process.env.OWNER != message.userID){
+        return;
+      }
+      if (myID != mSenderId) {
+        return;
+      }
+      if (message.reaction != "😠") {
+        return;
+      }
+      api.unsendMessage(message.messageID);
+    }
+
+    //Commands
     if (message.type === "message") {
       await save(api, message);
       const msgToList = message.body.split(" ").filter((i) => i.trim() != "");
