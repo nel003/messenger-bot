@@ -49,7 +49,7 @@ module.exports = async function main(api, message, sentence) {
   const info = await api.getUserInfo(message.senderID);
   const { name, firstName } = info[message.senderID];
   
-  if (sentence === "undefined") {
+  if (sentence.trim() === "") {
     api.sendMessage(
     {
       body: `@${firstName} Please provide some input.`,

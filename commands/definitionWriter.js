@@ -22,7 +22,7 @@ async function getTokenID() {
   return 0;
 }
 
-async function story(id, sentence, intensity) {
+async function write(id, sentence, intensity) {
   const res = await axios({
     method: "GET",
     url: `https://top-one-uwu-clone-2.onrender.com/api/openai/basic-completion?payload=%7B%22serverId%22:${id},%22input%22:%22${sentence
@@ -30,7 +30,7 @@ async function story(id, sentence, intensity) {
       .replace(
         " ",
         "+"
-      )}%22,%22intensity%22:${intensity},%22onlyFirstParagraph%22:false,%22language%22:%22English%22,%22prompt%22:%22Write+a+short+story,+the+[Input]+is+the+topic.%22%7D`,
+      )}%22,%22intensity%22:${intensity},%22onlyFirstParagraph%22:false,%22language%22:%22English%22,%22prompt%22:%22Give+the+definition+of+the+given+[Input].%22%7D`,
     headers,
   });
   return res.data;
@@ -41,7 +41,7 @@ module.exports = async function main(api, message, sentence) {
   if (has === null) {
     return;
   }
-  if (!has.allowed.includes("story")) {
+  if (!has.allowed.includes("define")) {
     return;
   }
 
@@ -64,11 +64,15 @@ module.exports = async function main(api, message, sentence) {
     return;
   }
   const id = await getTokenID();
-  const answer = await story(id, sentence, 4);
+  const answer = await write(id, sentence, 4);
+  const capitalizedAnswer =
+    answer.trim()[0].toUpperCase() + answer.trim().substring(1);
+  const capitalizedSentence =
+    sentence.trim()[0].toUpperCase() + sentence.trim().substring(1);
 
   api.sendMessage(
     {
-      body: `@${firstName} Here's your short story🎉\n\n${answer}`,
+      body: `@${firstName} Here's the definition🎉\n\n${capitalizedSentence}\n\n${capitalizedAnswer}`,
       mentions: [
         {
           tag: `@${firstName}`,

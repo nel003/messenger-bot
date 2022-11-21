@@ -12,9 +12,19 @@ const grant = require("./commands/grant");
 const rmp = require("./commands/rmp");
 const essay = require("./commands/essayWriter");
 const story = require("./commands/storyWriter");
+const define = require("./commands/definitionWriter");
+const google = require("./commands/googleIt");
 require("dotenv").config();
 
-const allCommands = ["gwapo", "gs", "cute", "essay", "story"];
+const allCommands = [
+  "gwapo",
+  "gs",
+  "cute",
+  "essay",
+  "story",
+  "search",
+  "define",
+];
 
 app.get("/", (req, res) => {
   res.send("Hello GET");
@@ -42,33 +52,39 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
       const msgToList = message.body.split(" ").filter((i) => i.trim() != "");
 
       //permissions
-      if (msgToList[0] === "/grant") {
+      if (msgToList[0] === "#grant") {
         if (msgToList[1] === "all") {
           await grant(api, message, allCommands);
         } else {
           await grant(api, message, msgToList.slice(1, msgToList.length));
         }
       }
-      if (message.body === "/rmp") {
+      if (message.body === "#rmp") {
         await rmp(api, message);
       }
 
-      //education commands
-      if (msgToList[0] === "/essay") {
-        await essay(api, message, message.body.replace("/essay"));
+      //acads commands
+      if (msgToList[0] === "#essay") {
+        await essay(api, message, message.body.replace("#essay", ""));
       }
-      if (msgToList[0] === "/story") {
-        await story(api, message, message.body.replace("/story"));
+      if (msgToList[0] === "#define") {
+        await define(api, message, message.body.replace("#define", ""));
+      }
+      if (msgToList[0] === "#story") {
+        await story(api, message, message.body.replace("#story", ""));
+      }
+      if (msgToList[0] === "#search") {
+        await google(api, message, message.body.replace("#search", ""));
       }
 
       //monggoloid commands
-      if (message.body === "/gwapo") {
+      if (message.body === "#gwapo") {
         await gwapo(api, message);
       }
-      if (message.body === "/cute") {
+      if (message.body === "#cute") {
         await cute(api, message);
       }
-      if (message.body === "/gs") {
+      if (message.body === "#gs") {
         random(api, message);
       }
       //END
