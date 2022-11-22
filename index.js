@@ -14,6 +14,7 @@ const essay = require("./commands/essayWriter");
 const story = require("./commands/storyWriter");
 const define = require("./commands/definitionWriter");
 const google = require("./commands/googleIt");
+const play = require("./commands/play");
 require("dotenv").config();
 
 const allCommands = [
@@ -24,6 +25,7 @@ const allCommands = [
   "story",
   "search",
   "define",
+  "play",
 ];
 
 app.get("/", (req, res) => {
@@ -51,7 +53,7 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
     if (message.type === "message_reaction") {
       const myID = api.getCurrentUserID();
       const mSenderId = message.senderID;
-      if(process.env.OWNER != message.userID){
+      if (process.env.OWNER != message.userID) {
         return;
       }
       if (myID != mSenderId) {
@@ -95,6 +97,9 @@ login({ appState: JSON.parse(process.env.APPSTATE) }, (err, api) => {
       }
 
       //monggoloid commands
+      if (msgToList[0] === "#play") {
+        await play(api, message, message.body.replace("#play", ""));
+      }
       if (message.body === "#gwapo") {
         await gwapo(api, message);
       }
