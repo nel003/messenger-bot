@@ -3,10 +3,11 @@ const axios = require("axios");
 const Permissions = require("../model/Permissions");
 const fs = require("fs");
 const https = require("https");
+require("dotenv").config();
 
 const spotify = new Spotify({
-  id: "a2483dab6389471a8f9f4e28bd7310fd",
-  secret: "330ec1c2fdb146b58e21e5c6051c0012",
+  id: process.env.SPOTIFY_ID,
+  secret: process.env.SPOTIFY_SECRET,
 });
 
 function randomStr(length) {
