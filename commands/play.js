@@ -1,6 +1,7 @@
 const Spotify = require("node-spotify-api");
 const axios = require("axios");
 const Permissions = require("../model/Permissions");
+const shorten = require("../utils/urlShort");
 const fs = require("fs");
 const https = require("https");
 require("dotenv").config();
@@ -23,7 +24,10 @@ function randomStr(length) {
 
 async function search(title) {
   const res = await spotify.search({ type: "track", query: title });
-  return res.tracks.items[0].external_urls.spotify;
+  const artist = res.tracks.items[0].artists[0].name;
+  const songTitle = res.tracks.items[0].name;
+  const spotiURL = res.tracks.items[0].external_urls.spotify;
+  return { artist, songTitle, spotiURL };
 }
 
 async function isDownloaded(link, path) {
@@ -66,7 +70,7 @@ module.exports = async function main(api, message, title) {
     );
     return;
   }
-  const spotiURL = await search(title);
+  const { artist, songTitle, spotiURL } = await search(title);
 
   const res = await axios({
     method: "POST",
@@ -79,12 +83,12 @@ module.exports = async function main(api, message, title) {
 
   const mp3 = res.data.audio.url;
   const path = `./mp3/${randomStr(10)}.mp3`;
-
+  const shortUrl = await shorten(mp3);
   await isDownloaded(mp3, path);
 
   api.sendMessage(
     {
-      body: `@${firstName} Here's your request🎶`,
+      body: `@${firstName} Here's your request🎶\n\nArtist: ${artist}\nTitle: ${songTitle}\nDownload: ${shortUrl}`,
       attachment: fs.createReadStream(path),
       mentions: [
         {
